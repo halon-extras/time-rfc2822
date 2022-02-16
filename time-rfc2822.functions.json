@@ -1,0 +1,22 @@
+[
+    {
+        "name": "time_rfc2822",
+        "parameters": {
+            "optional": [
+                {
+                    "name": "unixtime",
+                    "type": "number"
+                },
+                {
+                    "name": "location",
+                    "type": "string"
+                }
+            ]
+        },
+        "returnType": "string",
+        "detail": "time_rfc2822([number $unixtime, string $location]): string",
+        "value": "time_rfc2822($0)",
+        "documentation": "Create a time in RFC2822 format. An optional unix time can be provided, otherwise the current time will be used.  An optional location (time zone) can be provided, otherwise the current location will be used. On success it will return a string that contains the time in RFC2822 format. On error an exception will be thrown.",
+        "link": "[Full documentation](https://github.com/halon-extras/time-rfc2822)"
+    }
+]

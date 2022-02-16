@@ -1,0 +1,3 @@
+echo time_rfc2822();
+echo time_rfc2822(1645012689.519825);
+echo time_rfc2822(time(), "Europe/Stockholm");
