@@ -33,6 +33,9 @@ RUN cd /tmp/halon \
     && curl -O -L https://go.dev/dl/go1.17.6.linux-amd64.tar.gz \
     && tar -C /usr/local -xzf go1.17.6.linux-amd64.tar.gz
 
+RUN mkdir /licenses
+RUN cp /usr/local/go/LICENSE /licenses/LICENSE.go
+
 RUN rm -rf /tmp/halon
 
 COPY build.sh /build.sh

@@ -44,6 +44,7 @@ INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/time-rfc2822.so.link" DESTINATION plu
 INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/time-rfc2822.so.link" DESTINATION plugins/autoload/hsh RENAME time-rfc2822.so)
 
 INSTALL(FILES "LICENSE" DESTINATION share/doc/plugins/time-rfc2822)
+INSTALL(FILES "/licenses/LICENSE.go" DESTINATION share/doc/plugins/time-rfc2822)
 
 SET(CMAKE_INSTALL_PREFIX "/opt/halon")
 SET(CPACK_PACKAGING_INSTALL_PREFIX "/opt/halon")
