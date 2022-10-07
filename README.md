@@ -36,6 +36,7 @@ On success it will return a string that contains the time in RFC2822 format. On 
 **Example**
 
 ```
+import { time_rfc2822 } from "extras://time-rfc2822";
 echo time_rfc2822();
 echo time_rfc2822(1645012689.519825);
 echo time_rfc2822(time(), "Europe/Stockholm");

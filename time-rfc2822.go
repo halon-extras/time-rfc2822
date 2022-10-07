@@ -109,5 +109,6 @@ func time_rfc2822(hhc *C.HalonHSLContext, args *C.HalonHSLArguments, ret *C.Halo
 func Halon_hsl_register(hhrc *C.HalonHSLRegisterContext) C.bool {
 	time_rfc2822_cs := C.CString("time_rfc2822")
 	C.HalonMTA_hsl_register_function(hhrc, time_rfc2822_cs, nil)
+	C.HalonMTA_hsl_module_register_function(hhrc, time_rfc2822_cs, nil)
 	return true
 }
