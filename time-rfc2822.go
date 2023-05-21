@@ -6,6 +6,7 @@ package main
 // #include <stdlib.h>
 import "C"
 import (
+	"fmt"
 	"math"
 	"sync"
 	"time"
@@ -24,19 +25,53 @@ func Halon_version() C.int {
 	return C.HALONMTA_PLUGIN_VERSION
 }
 
-func set_ret_value(ret *C.HalonHSLValue, value string) {
-	value_cs := C.CString(value)
-	value_cs_up := unsafe.Pointer(value_cs)
-	defer C.free(value_cs_up)
-	C.HalonMTA_hsl_value_set(ret, C.HALONMTA_HSL_TYPE_STRING, value_cs_up, 0)
+func GetArgumentAsString(args *C.HalonHSLArguments, pos uint64, required bool) (string, error) {
+	var x = C.HalonMTA_hsl_argument_get(args, C.ulong(pos))
+	if x == nil {
+		if required {
+			return "", fmt.Errorf("missing argument at position %d", pos)
+		} else {
+			return "", nil
+		}
+	}
+	var y *C.char
+	if C.HalonMTA_hsl_value_get(x, C.HALONMTA_HSL_TYPE_STRING, unsafe.Pointer(&y), nil) {
+		return C.GoString(y), nil
+	} else {
+		return "", fmt.Errorf("invalid argument at position %d", pos)
+	}
 }
 
-func throw_exception(hhc *C.HalonHSLContext, value string) {
+func GetArgumentAsFloat(args *C.HalonHSLArguments, pos uint64, required bool) (float64, error) {
+	var x = C.HalonMTA_hsl_argument_get(args, C.ulong(pos))
+	if x == nil {
+		if required {
+			return 0, fmt.Errorf("missing argument at position %d", pos)
+		} else {
+			return 0, nil
+		}
+	}
+	var y C.double
+	if C.HalonMTA_hsl_value_get(x, C.HALONMTA_HSL_TYPE_NUMBER, unsafe.Pointer(&y), nil) {
+		return float64(y), nil
+	} else {
+		return 0, fmt.Errorf("invalid argument at position %d", pos)
+	}
+}
+
+func SetException(hhc *C.HalonHSLContext, msg string) {
+	x := C.CString(msg)
+	y := unsafe.Pointer(x)
+	defer C.free(y)
 	exception := C.HalonMTA_hsl_throw(hhc)
-	value_cs := C.CString(value)
-	value_cs_up := unsafe.Pointer(value_cs)
-	defer C.free(value_cs_up)
-	C.HalonMTA_hsl_value_set(exception, C.HALONMTA_HSL_TYPE_EXCEPTION, value_cs_up, 0)
+	C.HalonMTA_hsl_value_set(exception, C.HALONMTA_HSL_TYPE_EXCEPTION, y, 0)
+}
+
+func SetReturnValueToString(ret *C.HalonHSLValue, val string) {
+	x := C.CString(val)
+	y := unsafe.Pointer(x)
+	defer C.free(y)
+	C.HalonMTA_hsl_value_set(ret, C.HALONMTA_HSL_TYPE_STRING, y, 0)
 }
 
 func get_cached_location(location_string string) (*time.Location, error) {
@@ -58,27 +93,16 @@ func get_cached_location(location_string string) (*time.Location, error) {
 
 //export time_rfc2822
 func time_rfc2822(hhc *C.HalonHSLContext, args *C.HalonHSLArguments, ret *C.HalonHSLValue) {
-	var unixtime_cd C.double
-	var unixtime_float64 float64 = 0
-	var location_string string
-	var location_cs *C.char
-
-	var args_0 = C.HalonMTA_hsl_argument_get(args, 0)
-	if args_0 != nil {
-		if !C.HalonMTA_hsl_value_get(args_0, C.HALONMTA_HSL_TYPE_NUMBER, unsafe.Pointer(&unixtime_cd), nil) {
-			throw_exception(hhc, "Invalid type of \"unixtime\" argument")
-			return
-		}
-		unixtime_float64 = float64(unixtime_cd)
+	unixtime_float64, err := GetArgumentAsFloat(args, 0, false)
+	if err != nil {
+		SetException(hhc, err.Error())
+		return
 	}
 
-	var args_1 = C.HalonMTA_hsl_argument_get(args, 1)
-	if args_1 != nil {
-		if !C.HalonMTA_hsl_value_get(args_1, C.HALONMTA_HSL_TYPE_STRING, unsafe.Pointer(&location_cs), nil) {
-			throw_exception(hhc, "Invalid type of \"location\" argument")
-			return
-		}
-		location_string = C.GoString(location_cs)
+	location_string, err := GetArgumentAsString(args, 1, false)
+	if err != nil {
+		SetException(hhc, err.Error())
+		return
 	}
 
 	var old_time time.Time
@@ -93,7 +117,7 @@ func time_rfc2822(hhc *C.HalonHSLContext, args *C.HalonHSLArguments, ret *C.Halo
 	if len(location_string) > 0 {
 		location, err := get_cached_location(location_string)
 		if err != nil {
-			throw_exception(hhc, err.Error())
+			SetException(hhc, err.Error())
 			return
 		}
 		new_time := old_time.In(location)
@@ -102,7 +126,7 @@ func time_rfc2822(hhc *C.HalonHSLContext, args *C.HalonHSLArguments, ret *C.Halo
 		value = old_time.Format(time.RFC1123Z)
 	}
 
-	set_ret_value(ret, value)
+	SetReturnValueToString(ret, value)
 }
 
 //export Halon_hsl_register
