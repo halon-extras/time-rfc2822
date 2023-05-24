@@ -74,7 +74,7 @@ func SetReturnValueToString(ret *C.HalonHSLValue, val string) {
 	C.HalonMTA_hsl_value_set(ret, C.HALONMTA_HSL_TYPE_STRING, y, 0)
 }
 
-func get_cached_location(location_string string) (*time.Location, error) {
+func GetCachedLocation(location_string string) (*time.Location, error) {
 	lock.Lock()
 	defer lock.Unlock()
 	for _, cached_location := range cached_locations {
@@ -115,7 +115,7 @@ func time_rfc2822(hhc *C.HalonHSLContext, args *C.HalonHSLArguments, ret *C.Halo
 
 	var value string
 	if len(location_string) > 0 {
-		location, err := get_cached_location(location_string)
+		location, err := GetCachedLocation(location_string)
 		if err != nil {
 			SetException(hhc, err.Error())
 			return
