@@ -20,11 +20,6 @@ var (
 
 func main() {}
 
-//export Halon_version
-func Halon_version() C.int {
-	return C.HALONMTA_PLUGIN_VERSION
-}
-
 func GetArgumentAsString(args *C.HalonHSLArguments, pos uint64, required bool) (string, error) {
 	var x = C.HalonMTA_hsl_argument_get(args, C.ulong(pos))
 	if x == nil {
@@ -89,6 +84,11 @@ func GetCachedLocation(location_string string) (*time.Location, error) {
 	}
 
 	return location, err
+}
+
+//export Halon_version
+func Halon_version() C.int {
+	return C.HALONMTA_PLUGIN_VERSION
 }
 
 //export time_rfc2822
