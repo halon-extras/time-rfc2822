@@ -22,7 +22,7 @@ yum install halon-extras-time-rfc2822
 
 These functions needs to be [imported](https://docs.halon.io/hsl/structures.html#import) from the `extras://time-rfc2822` module path.
 
-### time_rfc2822([unixtime, location])
+### time_rfc2822([unixtime [, location]])
 
 Create a time in RFC2822 format. An optional unix time can be provided, otherwise the current time will be used. An optional location (time zone) can be provided, otherwise the current location will be used.
 
