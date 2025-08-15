@@ -21,6 +21,7 @@ RUN echo -n "UBU2204" > /OSRELEASE.txt
 RUN mkdir /tmp/halon
 RUN cd /tmp/halon \
     && curl -O -L https://go.dev/dl/go1.17.6.linux-amd64.tar.gz \
+    && echo "231654bbf2dab3d86c1619ce799e77b03d96f9b50770297c8f4dff8836fc8ca2 go1.17.6.linux-amd64.tar.gz" | sha256sum -c \
     && tar -C /usr/local -xzf go1.17.6.linux-amd64.tar.gz
 
 RUN mkdir /licenses
