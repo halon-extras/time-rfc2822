@@ -20,9 +20,11 @@ RUN echo -n "ROCKY9" > /OSRELEASE.txt
 
 RUN mkdir /tmp/halon
 RUN cd /tmp/halon \
-    && curl -O -L https://go.dev/dl/go1.17.6.linux-amd64.tar.gz \
-    && echo "231654bbf2dab3d86c1619ce799e77b03d96f9b50770297c8f4dff8836fc8ca2 go1.17.6.linux-amd64.tar.gz" | sha256sum -c \
-    && tar -C /usr/local -xzf go1.17.6.linux-amd64.tar.gz
+    && curl -O -L https://go.dev/dl/go1.25.5.linux-amd64.tar.gz \
+    && echo "9e9b755d63b36acf30c12a9a3fc379243714c1c6d3dd72861da637f336ebb35b go1.25.5.linux-amd64.tar.gz" | sha256sum -c \
+    && tar -C /usr/local -xzf go1.25.5.linux-amd64.tar.gz
+RUN /usr/local/go/bin/go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
+ENV PATH="$PATH:/usr/local/go/bin:/root/go/bin"
 
 RUN mkdir /licenses
 RUN cp /usr/local/go/LICENSE /licenses/LICENSE.go
